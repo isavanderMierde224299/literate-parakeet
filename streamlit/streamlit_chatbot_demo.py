@@ -136,8 +136,7 @@ def generate_response(user_input):
 
     # Help / Example questions
     if "what can i ask" in input_lower or "help" in input_lower or "example questions" in input_lower:
-        if "what can i ask" in input_lower or "help" in input_lower or "example questions" in input_lower:
-    return (
+        return (
         "🧠 Here's what I can help you with:\n\n"
         "📊 *Sprint & Team Info*\n"
         "- What is the current sprint status?\n"
