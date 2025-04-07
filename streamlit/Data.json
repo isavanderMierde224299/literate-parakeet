@@ -1,0 +1,153 @@
+{
+    "teams": [
+      {
+        "team_name": "Alpha",
+        "sprints": [
+          {
+            "sprint_id": 1,
+            "velocity": 80,
+            "blockers": 2,
+            "story_points_planned": 90,
+            "story_points_completed": 80,
+            "bugs_reported": 3,
+            "end_date": "2025-03-23"
+          },
+          {
+            "sprint_id": 2,
+            "velocity": 85,
+            "blockers": 1,
+            "story_points_planned": 95,
+            "story_points_completed": 85,
+            "bugs_reported": 2,
+            "end_date": "2025-03-30"
+          },
+          {
+            "sprint_id": 3,
+            "velocity": 90,
+            "blockers": 4,
+            "story_points_planned": 100,
+            "story_points_completed": 90,
+            "bugs_reported": 5,
+            "end_date": "2025-04-06"
+          }
+        ],
+        "members": [
+          {
+            "name": "Alice",
+            "role": "Developer",
+            "avg_points": 22,
+            "bugs_reported": 5
+          },
+          {
+            "name": "Bob",
+            "role": "Tester",
+            "avg_points": 30,
+            "bugs_reported": 7
+          }
+        ],
+        "user_stories": [
+          {
+            "id": "US-101",
+            "title": "Implement login feature",
+            "assigned_to": "Alice",
+            "status": "In Progress"
+          },
+          {
+            "id": "US-102",
+            "title": "Add forgot password",
+            "assigned_to": "Bob",
+            "status": "Done"
+          }
+        ],
+        "bugs": [
+          {
+            "id": "BUG-301",
+            "description": "Login page crashes",
+            "assigned_to": "Charlie",
+            "status": "Open"
+          },
+          {
+            "id": "BUG-302",
+            "description": "Broken forgot password link",
+            "assigned_to": "Diana",
+            "status": "Closed"
+          }
+        ]
+      },
+      {
+        "team_name": "Beta",
+        "sprints": [
+          {
+            "sprint_id": 1,
+            "velocity": 70,
+            "blockers": 3,
+            "story_points_planned": 85,
+            "story_points_completed": 70,
+            "bugs_reported": 4,
+            "end_date": "2025-03-23"
+          },
+          {
+            "sprint_id": 2,
+            "velocity": 75,
+            "blockers": 2,
+            "story_points_planned": 90,
+            "story_points_completed": 75,
+            "bugs_reported": 3,
+            "end_date": "2025-03-30"
+          },
+          {
+            "sprint_id": 3,
+            "velocity": 65,
+            "blockers": 5,
+            "story_points_planned": 100,
+            "story_points_completed": 65,
+            "bugs_reported": 6,
+            "end_date": "2025-04-06"
+          }
+        ],
+        "members": [
+          {
+            "name": "Charlie",
+            "role": "Developer",
+            "avg_points": 18,
+            "bugs_reported": 6
+          },
+          {
+            "name": "Diana",
+            "role": "Tester",
+            "avg_points": 35,
+            "bugs_reported": 4
+          }
+        ],
+        "user_stories": [
+          {
+            "id": "US-201",
+            "title": "Create user dashboard",
+            "assigned_to": "Charlie",
+            "status": "In Progress"
+          },
+          {
+            "id": "US-202",
+            "title": "Add user analytics",
+            "assigned_to": "Diana",
+            "status": "To Do"
+          }
+        ],
+        "bugs": [
+          {
+            "id": "BUG-401",
+            "description": "Dashboard layout issue",
+            "assigned_to": "Charlie",
+            "status": "Open"
+          },
+          {
+            "id": "BUG-402",
+            "description": "Analytics report fails",
+            "assigned_to": "Diana",
+            "status": "Closed"
+          }
+        ]
+      }
+    ]
+  }
+  
