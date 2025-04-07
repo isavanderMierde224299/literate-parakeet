@@ -251,7 +251,7 @@ st.markdown("Ask questions like:")
 st.markdown("- *What is the sprint status of Team Alpha*")
 st.markdown("- *Predict next sprint for Team Beta*")
 st.markdown("- *What is the sprint risk for Team Alpha*")
-st.markdown("- *Which teams are available?*")
+st.markdown("- *Which teams are available*")
 st.markdown("- *List team members of Team Beta*")
 
 user_input = st.text_input("Ask something:", "")
