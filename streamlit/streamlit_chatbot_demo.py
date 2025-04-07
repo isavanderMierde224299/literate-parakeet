@@ -10,8 +10,13 @@ import os
 from datetime import datetime, timedelta
 
 # Load project data
-with open("Data.json", "r") as f:
+base_path = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(base_path, "Data.json")
+
+# Now open safely
+with open(file_path, "r") as f:
     data = json.load(f)
+
 
 teams = data["teams"]
 
