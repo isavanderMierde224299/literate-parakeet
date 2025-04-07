@@ -136,23 +136,25 @@ def generate_response(user_input):
 
     # Help / Example questions
     if "what can i ask" in input_lower or "help" in input_lower or "example questions" in input_lower:
-        return (
-            "🧠 Here's what I can help you with:\n\n"
-            "📊 *Sprint & Team Info*\n"
-            "- What is the sprint status of Team Alpha?\n"
-            "- What is the sprint risk for Team Beta?\n\n"
-            "🔮 *Sprint Predictions*\n"
-            "- Predict next sprint for Team Alpha\n\n"
-            "📋 *User Stories & Bugs*\n"
-            "- Which user stories are still open for Team Alpha?\n"
-            "- What is the bug progress for Team Beta?\n"
-            "- Who is US-101 assigned to?\n\n"
-            "📈 *Charts & Reports*\n"
-            "- Show charts for Team Beta\n"
-            "- Export report as PDF\n\n"
-            "🤖 Just type a question like you're chatting with me. I'll do my best!",
-            None
-        )
+        if "what can i ask" in input_lower or "help" in input_lower or "example questions" in input_lower:
+    return (
+        "🧠 Here's what I can help you with:\n\n"
+        "📊 *Sprint & Team Info*\n"
+        "- What is the current sprint status?\n"
+        "- What is the sprint risk level?\n\n"
+        "🔮 *Sprint Predictions*\n"
+        "- Predict the next sprint velocity\n\n"
+        "📋 *User Stories & Bugs*\n"
+        "- Which user stories are still open?\n"
+        "- What is the current bug progress?\n"
+        "- Who is a specific user story assigned to?\n\n"
+        "📈 *Charts & Reports*\n"
+        "- Show charts for a team\n"
+        "- Export a sprint report as PDF\n\n"
+        "🤖 Just ask like you're talking to a teammate — I’ll do my best to help!",
+        None
+    )
+
 
     if "teams" in input_lower:
         return "📋 Here are the available teams: " + ", ".join([t["team_name"] for t in teams]), None
