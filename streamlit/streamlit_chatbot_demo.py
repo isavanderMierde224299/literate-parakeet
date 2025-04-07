@@ -10,7 +10,7 @@ import os
 from datetime import datetime, timedelta
 
 # Load project data
-with open("../Data.json", "r") as f:
+with open("Data.json", "r") as f:
     data = json.load(f)
 
 teams = data["teams"]
