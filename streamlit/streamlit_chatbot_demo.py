@@ -24,6 +24,27 @@ teams = data["teams"]
 def get_team_by_name(name):
     return next((t for t in teams if t["team_name"].lower() == name.lower()), None)
 
+    # Help / Example questions
+    if "what can i ask" in input_lower or "help" in input_lower or "example questions" in input_lower:
+        return (
+            "🧠 Here's what I can help you with:\n\n"
+            "📊 *Sprint & Team Info*\n"
+            "- What is the sprint status of Team Alpha?\n"
+            "- What is the sprint risk for Team Beta?\n\n"
+            "🔮 *Sprint Predictions*\n"
+            "- Predict next sprint for Team Alpha\n\n"
+            "📋 *User Stories & Bugs*\n"
+            "- Which user stories are still open for Team Alpha?\n"
+            "- What is the bug progress for Team Beta?\n"
+            "- Who is US-101 assigned to?\n\n"
+            "📈 *Charts & Reports*\n"
+            "- Show charts for Team Beta\n"
+            "- Export report as PDF\n\n"
+            "🤖 Just type a question like you're chatting with me. I'll do my best!",
+            None
+        )
+
+
 def get_latest_sprint(team):
     return team["sprints"][-1]
 
