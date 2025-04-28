@@ -1,6 +1,5 @@
 import streamlit as st
 import json
-import pandas as pd
 import random
 import matplotlib.pyplot as plt
 from reportlab.lib.pagesizes import A4
@@ -8,28 +7,30 @@ from reportlab.pdfgen import canvas
 import tempfile
 import os
 from datetime import datetime, timedelta
-
+from transformers import pipeline
+ 
+# Load Hugging Face zero-shot classifier
+classifier = pipeline("zero-shot-classification")
+ 
 # Load project data
 base_path = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(base_path, "Data.json")
-
-# Now open safely
+ 
 with open(file_path, "r") as f:
     data = json.load(f)
-
-
+ 
 teams = data["teams"]
-
+ 
 # Utility functions
 def get_team_by_name(name):
     return next((t for t in teams if t["team_name"].lower() == name.lower()), None)
-
+ 
 def get_latest_sprint(team):
     return team["sprints"][-1]
-
+ 
 def get_last_n_velocities(team, n=3):
     return [s["velocity"] for s in team["sprints"][-n:]]
-
+ 
 def calculate_risk(team):
     latest = get_latest_sprint(team)
     risk_score = 0
@@ -40,12 +41,11 @@ def calculate_risk(team):
     if latest["bugs_reported"] > 4:
         risk_score += 1
     return "🔴 High Risk" if risk_score >= 2 else "🟡 Moderate Risk" if risk_score == 1 else "🟢 Low Risk"
-
+ 
 def get_teams_with_recent_sprint(days=7):
     recent_teams = []
     today = datetime.today()
     cutoff = today - timedelta(days=days)
-
     for team in teams:
         last_sprint = get_latest_sprint(team)
         end_date = last_sprint.get("end_date")
@@ -54,13 +54,23 @@ def get_teams_with_recent_sprint(days=7):
             if sprint_date >= cutoff:
                 recent_teams.append(team)
     return recent_teams
-
+ 
+# Prediction function
+def predict_next_sprint(team, lookback=3):
+    sprints = team["sprints"][-lookback:]
+    avg_velocity = int(sum(s["velocity"] for s in sprints) / len(sprints))
+    avg_blockers = round(sum(s["blockers"] for s in sprints) / len(sprints), 1)
+    avg_bugs = round(sum(s["bugs_reported"] for s in sprints) / len(sprints), 1)
+    predicted_velocity = avg_velocity + random.randint(-2, 2)
+    predicted_blockers = max(0, avg_blockers + random.uniform(-1, 1))
+    predicted_bugs = max(0, avg_bugs + random.uniform(-1, 1))
+    return predicted_velocity, round(predicted_blockers, 1), round(predicted_bugs, 1)
+ 
 # Plot functions
 def plot_velocity(team):
     sprints = team["sprints"]
     x = [f"Sprint {s['sprint_id']}" for s in sprints]
     y = [s["velocity"] for s in sprints]
-
     fig, ax = plt.subplots()
     ax.plot(x, y, marker='o', linewidth=2)
     ax.set_title(f"Velocity Over Time – {team['team_name']}")
@@ -68,13 +78,12 @@ def plot_velocity(team):
     ax.set_xlabel("Sprint")
     ax.grid(True)
     st.pyplot(fig)
-
+ 
 def plot_blockers_bugs(team):
     sprints = team["sprints"]
     x = [f"Sprint {s['sprint_id']}" for s in sprints]
     blockers = [s["blockers"] for s in sprints]
     bugs = [s["bugs_reported"] for s in sprints]
-
     fig, ax = plt.subplots()
     ax.bar(x, blockers, label="Blockers", alpha=0.7)
     ax.bar(x, bugs, bottom=blockers, label="Bugs", alpha=0.7)
@@ -83,13 +92,12 @@ def plot_blockers_bugs(team):
     ax.set_xlabel("Sprint")
     ax.legend()
     st.pyplot(fig)
-
+ 
 def plot_completion_ratio(team):
     sprints = team["sprints"]
     x = [f"Sprint {s['sprint_id']}" for s in sprints]
     completed = [s["story_points_completed"] for s in sprints]
     planned = [s["story_points_planned"] for s in sprints]
-
     fig, ax = plt.subplots()
     ax.plot(x, completed, label="Completed", marker='o')
     ax.plot(x, planned, label="Planned", linestyle='--', marker='x')
@@ -99,16 +107,14 @@ def plot_completion_ratio(team):
     ax.legend()
     ax.grid(True)
     st.pyplot(fig)
-
+ 
 # PDF Export
 def export_pdf_report(team):
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
     c = canvas.Canvas(temp_file.name, pagesize=A4)
     width, height = A4
-
     c.setFont("Helvetica-Bold", 16)
     c.drawString(50, height - 50, f"DevOps Sprint Report – {team['team_name']}")
-
     latest = get_latest_sprint(team)
     text = f"""
     Sprint ID: {latest['sprint_id']}
@@ -124,68 +130,48 @@ def export_pdf_report(team):
     for line in text.strip().split("\n"):
         c.drawString(50, y, line.strip())
         y -= 20
-
     c.showPage()
     c.save()
-
     return temp_file.name
-
-# Chatbot Logic
-def generate_response(user_input):
-    input_lower = user_input.lower()
-
-    # Help / Example questions
-    if "what can i ask" in input_lower or "help" in input_lower or "example questions" in input_lower:
-        return (
-        "🧠 Here's what I can help you with:\n\n"
-        "📊 *Sprint & Team Info*\n"
-        "- What is the current sprint status?\n"
-        "- What is the sprint risk level?\n\n"
-        "🔮 *Sprint Predictions*\n"
-        "- Predict the next sprint velocity\n\n"
-        "📋 *User Stories & Bugs*\n"
-        "- Which user stories are still open?\n"
-        "- What is the current bug progress?\n"
-        "- Who is a specific user story assigned to?\n\n"
-        "📈 *Charts & Reports*\n"
-        "- Show charts for a team\n"
-        "- Export a sprint report as PDF\n\n"
-        "🤖 Just ask like you're talking to a teammate — I’ll do my best to help!",
-        None
-    )
-
-
-    if "teams" in input_lower:
+ 
+# Intent Detection + Chatbot Logic
+def detect_intent(user_input):
+    candidate_labels = [
+        "sprint status", "user story assignment", "user story duration", "bug tracking",
+        "sprint prediction", "team members", "list teams", "export report"
+    ]
+    result = classifier(user_input, candidate_labels)
+    return result['labels'][0], result['scores'][0]
+ 
+def generate_response_with_nlp(user_input):
+    intent, score = detect_intent(user_input)
+    user_input_lower = user_input.lower()
+ 
+    if score < 0.7:
+        return "I'm not quite sure what you mean. Can you rephrase?", None
+ 
+    if intent == "list teams":
         return "📋 Here are the available teams: " + ", ".join([t["team_name"] for t in teams]), None
-
-
-    if "teams" in input_lower:
-        return "📋 Here are the available teams: " + ", ".join([t["team_name"] for t in teams]), None
-
-    # 🎯 Check user story assignment by ID first
-    if "assigned to" in input_lower:
+ 
+    if intent == "user story assignment":
         for team in teams:
             for story in team.get("user_stories", []):
-                if story["id"].lower() in input_lower:
-                    return f"🧠 Good question! User story **{story['id']}** is assigned to **{story['assigned_to']}** in Team {team['team_name']}.", None
-        return "❓ Hmm, I couldn’t find that user story ID. Maybe double-check it?", None
-
-    # 📋 Check for open user stories before team member lookup
-    if "user stories" in input_lower and "open" in input_lower:
+                if story["id"].lower() in user_input_lower:
+                    return f"🧠 User story **{story['id']}** is assigned to **{story['assigned_to']}** in Team {team['team_name']}.", None
+        return "❓ I couldn’t find that user story ID.", None
+ 
+    if intent == "user story duration":
         for team in teams:
-            if team["team_name"].lower() in input_lower:
-                stories = team.get("user_stories", [])
-                open_stories = [us for us in stories if us["status"].lower() != "done"]
-                if open_stories:
-                    story_list = "\n".join([f"- {us['id']}: {us['title']} (👤 {us['assigned_to']})" for us in open_stories])
-                    return f"📋 Open User Stories for Team {team['team_name']}:\n\n{story_list}", None
-                else:
-                    return f"✅ No open user stories for Team {team['team_name']}! Great work team! 🎉", None
-
-    # 🐞 Bug progress
-    if "bug progress" in input_lower:
+            for story in team.get("user_stories", []):
+                if story["id"].lower() in user_input_lower:
+                    opened_date = datetime.strptime(story["opened_date"], "%Y-%m-%d")
+                    days_open = (datetime.today() - opened_date).days
+                    return f"⏳ User story **{story['id']}** has been open for **{days_open} days**.", None
+        return "❓ I couldn’t find that user story ID.", None
+ 
+    if intent == "bug tracking":
         for team in teams:
-            if team["team_name"].lower() in input_lower:
+            if team["team_name"].lower() in user_input_lower:
                 bugs = team.get("bugs", [])
                 open_bugs = [b for b in bugs if b["status"].lower() == "open"]
                 closed_bugs = [b for b in bugs if b["status"].lower() == "closed"]
@@ -196,13 +182,11 @@ def generate_response(user_input):
                     f"Keep squashing them! 💪",
                     None
                 )
-
-    # 🔁 Loop through teams for other checks
+ 
     for team in teams:
         name = team["team_name"].lower()
-        if name in input_lower:
-
-            if "how is" in input_lower or "status" in input_lower:
+        if name in user_input_lower:
+            if intent == "sprint status":
                 sprint = get_latest_sprint(team)
                 response = (
                     f"📊 *Sprint Overview for {team['team_name']} (Sprint {sprint['sprint_id']})*\n\n"
@@ -213,64 +197,50 @@ def generate_response(user_input):
                     f"🚦 Risk Level: {calculate_risk(team)}"
                 )
                 return response, None
-
-            elif "predict" in input_lower or "forecast" in input_lower:
-                velocities = get_last_n_velocities(team)
-                predicted = int(sum(velocities) / len(velocities) + random.randint(-3, 3))
+ 
+            elif intent == "sprint prediction":
+                predicted_velocity, predicted_blockers, predicted_bugs = predict_next_sprint(team)
                 return (
-                    f"🔮 Based on recent sprints, Team {team['team_name']} is expected to complete **{predicted} story points** in the next sprint. Keep it up! 🚀",
+                    f"🔮 *Sprint Forecast for {team['team_name']}*\n\n"
+                    f"- **Predicted Velocity**: {predicted_velocity} SP\n"
+                    f"- **Expected Blockers**: {predicted_blockers}\n"
+                    f"- **Expected Bugs**: {predicted_bugs}\n\n"
+                    f"Plan accordingly and let's aim high! 🚀",
                     None
                 )
-
-            elif "risk" in input_lower:
-                return f"⚠️ Sprint Risk for {team['team_name']}: {calculate_risk(team)}", None
-
-            elif "chart" in input_lower or "visual" in input_lower:
-                return f"📊 You got it! Charts for **{team['team_name']}** are loading below. 📈", team
-
-            elif "members" in input_lower or "team" in input_lower:
+ 
+            elif intent == "team members":
                 members = [f"👤 {m['name']} – *{m['role']}*" for m in team["members"]]
                 return f"👥 Here's the lineup for Team {team['team_name']}:\n" + "\n".join(members), None
-
-    return (
-        "🤔 I didn’t catch that one. Try asking me things like:\n"
-        "- *Which user stories are still open for Team Alpha?*\n"
-        "- *What is the bug progress for Team Beta?*\n"
-        "- *Who is US-101 assigned to?*\n"
-        "- *Show charts for Team Alpha*",
-        None
-    )
-
-
-
-# UI
+ 
+    return "🤔 Not sure how to help with that yet. Try asking something else?", None
+ 
+# Streamlit UI
 st.set_page_config(page_title="DevOps Copilot", layout="centered")
 st.title("🤖 DevOps Assistant – Sprint Intelligence Demo")
-
+ 
 st.markdown("Ask questions like:")
 st.markdown("- *What is the sprint status of Team Alpha*")
-st.markdown("- *Predict next sprint for Team Beta*")
-st.markdown("- *What is the sprint risk for Team Alpha*")
-st.markdown("- *Which teams are available*")
-st.markdown("- *List team members of Team Beta*")
-
+st.markdown("- *How should Team Alpha's next sprint look like?*")
+st.markdown("- *How long has US-101 been open?*")
+st.markdown("- *What is the bug progress for Team Gamma?*")
+ 
 user_input = st.text_input("Ask something:", "")
-
+ 
 if user_input:
     st.markdown("🧠 Thinking...")
-    reply, chart_team = generate_response(user_input)
+    reply, chart_team = generate_response_with_nlp(user_input)
     st.markdown(f"**Assistant:**\n\n{reply}")
-
+ 
     if chart_team:
         plot_velocity(chart_team)
         plot_blockers_bugs(chart_team)
         plot_completion_ratio(chart_team)
-
-# 📄 Export report manually
+ 
+# PDF Export
 with st.expander("📄 Export Sprint Report"):
     team_names = [t["team_name"] for t in teams]
     selected_team = st.selectbox("Select a team", team_names)
-
     if st.button("Export Report as PDF"):
         team_obj = get_team_by_name(selected_team)
         if team_obj:
@@ -283,8 +253,8 @@ with st.expander("📄 Export Sprint Report"):
                     mime="application/pdf"
                 )
             os.remove(pdf_path)
-
-# 🗓️ Auto-generate weekly reports
+ 
+# Auto-generate weekly reports
 with st.expander("🗓️ Auto-Generate Weekly Reports"):
     st.markdown("This generates reports for teams whose sprints ended in the last 7 days.")
     if st.button("Generate Weekly Reports"):
