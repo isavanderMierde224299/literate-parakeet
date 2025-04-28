@@ -8,18 +8,6 @@ import tempfile
 import os
 from datetime import datetime, timedelta
 from transformers import pipeline
-import subprocess
-import sys
-
-# Check if the 'transformers' library is installed
-try:
-    import transformers
-except ImportError:
-    print("transformers package not found. Installing...")
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "transformers"])
-
-# Now you can safely import the library
-from transformers import pipeline
 
  
 # Load Hugging Face zero-shot classifier
