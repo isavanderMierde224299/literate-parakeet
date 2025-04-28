@@ -11,7 +11,12 @@ from transformers import pipeline
 
  
 # Load Hugging Face zero-shot classifier
-classifier = pipeline("zero-shot-classification")
+try:
+    classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli", device=-1)
+except Exception as e:
+    st.error("⚠️ Failed to load NLP model. Please check internet connection or environment configuration.")
+    st.stop()
+
  
 # Load project data
 base_path = os.path.dirname(os.path.abspath(__file__))
