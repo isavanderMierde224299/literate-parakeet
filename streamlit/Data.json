@@ -1,153 +1,174 @@
 {
-    "teams": [
-      {
-        "team_name": "Alpha",
-        "sprints": [
-          {
-            "sprint_id": 1,
-            "velocity": 80,
-            "blockers": 2,
-            "story_points_planned": 90,
-            "story_points_completed": 80,
-            "bugs_reported": 3,
-            "end_date": "2025-03-23"
-          },
-          {
-            "sprint_id": 2,
-            "velocity": 85,
-            "blockers": 1,
-            "story_points_planned": 95,
-            "story_points_completed": 85,
-            "bugs_reported": 2,
-            "end_date": "2025-03-30"
-          },
-          {
-            "sprint_id": 3,
-            "velocity": 90,
-            "blockers": 4,
-            "story_points_planned": 100,
-            "story_points_completed": 90,
-            "bugs_reported": 5,
-            "end_date": "2025-04-06"
-          }
-        ],
-        "members": [
-          {
-            "name": "Alice",
-            "role": "Developer",
-            "avg_points": 22,
-            "bugs_reported": 5
-          },
-          {
-            "name": "Bob",
-            "role": "Tester",
-            "avg_points": 30,
-            "bugs_reported": 7
-          }
-        ],
-        "user_stories": [
-          {
-            "id": "US-101",
-            "title": "Implement login feature",
-            "assigned_to": "Alice",
-            "status": "In Progress"
-          },
-          {
-            "id": "US-102",
-            "title": "Add forgot password",
-            "assigned_to": "Bob",
-            "status": "Done"
-          }
-        ],
-        "bugs": [
-          {
-            "id": "BUG-301",
-            "description": "Login page crashes",
-            "assigned_to": "Charlie",
-            "status": "Open"
-          },
-          {
-            "id": "BUG-302",
-            "description": "Broken forgot password link",
-            "assigned_to": "Diana",
-            "status": "Closed"
-          }
-        ]
-      },
-      {
-        "team_name": "Beta",
-        "sprints": [
-          {
-            "sprint_id": 1,
-            "velocity": 70,
-            "blockers": 3,
-            "story_points_planned": 85,
-            "story_points_completed": 70,
-            "bugs_reported": 4,
-            "end_date": "2025-03-23"
-          },
-          {
-            "sprint_id": 2,
-            "velocity": 75,
-            "blockers": 2,
-            "story_points_planned": 90,
-            "story_points_completed": 75,
-            "bugs_reported": 3,
-            "end_date": "2025-03-30"
-          },
-          {
-            "sprint_id": 3,
-            "velocity": 65,
-            "blockers": 5,
-            "story_points_planned": 100,
-            "story_points_completed": 65,
-            "bugs_reported": 6,
-            "end_date": "2025-04-06"
-          }
-        ],
-        "members": [
-          {
-            "name": "Charlie",
-            "role": "Developer",
-            "avg_points": 18,
-            "bugs_reported": 6
-          },
-          {
-            "name": "Diana",
-            "role": "Tester",
-            "avg_points": 35,
-            "bugs_reported": 4
-          }
-        ],
-        "user_stories": [
-          {
-            "id": "US-201",
-            "title": "Create user dashboard",
-            "assigned_to": "Charlie",
-            "status": "In Progress"
-          },
-          {
-            "id": "US-202",
-            "title": "Add user analytics",
-            "assigned_to": "Diana",
-            "status": "To Do"
-          }
-        ],
-        "bugs": [
-          {
-            "id": "BUG-401",
-            "description": "Dashboard layout issue",
-            "assigned_to": "Charlie",
-            "status": "Open"
-          },
-          {
-            "id": "BUG-402",
-            "description": "Analytics report fails",
-            "assigned_to": "Diana",
-            "status": "Closed"
-          }
-        ]
-      }
-    ]
-  }
+  "teams": [
+    {
+      "team_name": "Team Alpha",
+      "members": [
+        { "name": "Alice", "role": "Scrum Master" },
+        { "name": "Bob", "role": "Developer" },
+        { "name": "Charlie", "role": "QA Engineer" }
+      ],
+      "sprints": [
+        {
+          "sprint_id": 1,
+          "start_date": "2024-03-01",
+          "end_date": "2024-03-14",
+          "story_points_planned": 30,
+          "story_points_completed": 28,
+          "velocity": 28,
+          "blockers": 2,
+          "bugs_reported": 3
+        },
+        {
+          "sprint_id": 2,
+          "start_date": "2024-03-15",
+          "end_date": "2024-03-28",
+          "story_points_planned": 32,
+          "story_points_completed": 25,
+          "velocity": 25,
+          "blockers": 4,
+          "bugs_reported": 5
+        },
+        {
+          "sprint_id": 3,
+          "start_date": "2024-04-01",
+          "end_date": "2024-04-14",
+          "story_points_planned": 35,
+          "story_points_completed": 34,
+          "velocity": 34,
+          "blockers": 1,
+          "bugs_reported": 2
+        }
+      ],
+      "user_stories": [
+        {
+          "id": "US-101",
+          "title": "Implement login feature",
+          "assigned_to": "Bob",
+          "status": "Done",
+          "opened_date": "2024-02-25",
+          "cycle_time_days": 10,
+          "work_item_type": "User Story"
+        },
+        {
+          "id": "US-102",
+          "title": "Create user profile page",
+          "assigned_to": "Alice",
+          "status": "In Progress",
+          "opened_date": "2024-03-20",
+          "cycle_time_days": 12,
+          "work_item_type": "User Story"
+        },
+        {
+          "id": "US-103",
+          "title": "Integrate payment gateway",
+          "assigned_to": "Charlie",
+          "status": "To Do",
+          "opened_date": "2024-04-01",
+          "cycle_time_days": 0,
+          "work_item_type": "User Story"
+        }
+      ],
+      "bugs": [
+        {
+          "id": "BUG-201",
+          "title": "Fix login redirect issue",
+          "assigned_to": "Charlie",
+          "status": "Closed",
+          "opened_date": "2024-03-10",
+          "cycle_time_days": 3,
+          "work_item_type": "Bug"
+        },
+        {
+          "id": "BUG-202",
+          "title": "Profile page crash on load",
+          "assigned_to": "Bob",
+          "status": "Open",
+          "opened_date": "2024-04-05",
+          "cycle_time_days": 7,
+          "work_item_type": "Bug"
+        }
+      ]
+    },
+    {
+      "team_name": "Team Beta",
+      "members": [
+        { "name": "Diana", "role": "Scrum Master" },
+        { "name": "Ethan", "role": "Developer" },
+        { "name": "Fiona", "role": "QA Engineer" }
+      ],
+      "sprints": [
+        {
+          "sprint_id": 1,
+          "start_date": "2024-03-01",
+          "end_date": "2024-03-14",
+          "story_points_planned": 25,
+          "story_points_completed": 20,
+          "velocity": 20,
+          "blockers": 3,
+          "bugs_reported": 4
+        },
+        {
+          "sprint_id": 2,
+          "start_date": "2024-03-15",
+          "end_date": "2024-03-28",
+          "story_points_planned": 28,
+          "story_points_completed": 27,
+          "velocity": 27,
+          "blockers": 2,
+          "bugs_reported": 3
+        },
+        {
+          "sprint_id": 3,
+          "start_date": "2024-04-01",
+          "end_date": "2024-04-14",
+          "story_points_planned": 30,
+          "story_points_completed": 22,
+          "velocity": 22,
+          "blockers": 5,
+          "bugs_reported": 6
+        }
+      ],
+      "user_stories": [
+        {
+          "id": "US-201",
+          "title": "Design dashboard UI",
+          "assigned_to": "Ethan",
+          "status": "Done",
+          "opened_date": "2024-02-28",
+          "cycle_time_days": 8,
+          "work_item_type": "User Story"
+        },
+        {
+          "id": "US-202",
+          "title": "API integration for reports",
+          "assigned_to": "Diana",
+          "status": "In Progress",
+          "opened_date": "2024-03-22",
+          "cycle_time_days": 10,
+          "work_item_type": "User Story"
+        }
+      ],
+      "bugs": [
+        {
+          "id": "BUG-301",
+          "title": "Incorrect data in reports",
+          "assigned_to": "Fiona",
+          "status": "Open",
+          "opened_date": "2024-04-03",
+          "cycle_time_days": 5,
+          "work_item_type": "Bug"
+        },
+        {
+          "id": "BUG-302",
+          "title": "Dashboard not loading",
+          "assigned_to": "Ethan",
+          "status": "Closed",
+          "opened_date": "2024-03-12",
+          "cycle_time_days": 4,
+          "work_item_type": "Bug"
+        }
+      ]
+    }
+  ]
+}
   
